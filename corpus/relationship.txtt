@@ -1,0 +1,53 @@
+========
+One relationship, short form, one-to-one
+========
+
+ref: "preferences"."user_id" - "users"."user_id"
+
+-----
+
+(project_file
+	(relationship_definition
+		(table (identifier) (column) (identifier))
+		(cardinality-operator)
+		(table (identifier) (column) (identifier))))
+
+========
+One relationship, long form, one-to-one
+========
+
+ref: relationship-name {
+	"preferences"."user_id" - "users"."user_id"
+}
+
+-----
+
+(project_file
+	(relationship_definition
+		(table (identifier) (column) (identifier))
+		(cardinality-operator)
+		(table (identifier) (column) (identifier))))
+
+
+========
+One relationship, inline form, one-to-one
+========
+
+Table posts {
+	id int [ref: - comments.post_id]
+}
+
+
+-----
+
+(project_file
+	(table
+	:name (identifier)
+	:fields (fields_declaration_list
+			(field_declaration
+			:name (identifier)
+			:type (primitive_type)
+			(field_attribute_list (relationship_definition (cardinality-operator) (table (identifier) (column))))))
+))
+
+

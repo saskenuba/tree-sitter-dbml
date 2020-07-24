@@ -1,7 +1,12 @@
 module.exports = grammar({
   name: "dbml",
 
+	extras: $ => [/\s|\\\r?\n\t/],
 	word: $ => $.identifier,
+
+	inline: $ => [
+		$.alias,
+	],
 
   rules: {
 
@@ -10,6 +15,7 @@ module.exports = grammar({
 	  // TODO: default, ref_inline, note
 	  attribute_kind: $ => choice(
 		  'not null',
+		  'null',
 		  'pk',
 		  'primary key',
 		  'unique',
@@ -17,7 +23,7 @@ module.exports = grammar({
 	  ),
 
 	  //
-	  operators: $ => choice(
+	  cardinality_operator: $ => choice(
 		  '<',
 		  '>',
 		  '-',
@@ -30,16 +36,25 @@ module.exports = grammar({
 		  'text',
 	  ),
 
+	  alias: $ => seq(
+		  'as', 
+		  $.identifier,
+	  ),
+
 	_declaration: $ => choice(
 		$.table_definition,
 		$.enum_definition,
+		$.relationship_definition,
 	),
 
 
 	  table_definition: $ => seq(
 		  'table',
 		  field('name', $.identifier),
-		  field('fields', $.fields_declaration_list),
+		  optional(
+			  field('alias', $.alias),
+		  ),
+		  field('fields', $.field_declaration_list),
 	  ),
 
 	  enum_definition: $ => seq(
@@ -47,7 +62,7 @@ module.exports = grammar({
 		  field('name', $.identifier)
 	  ),
 
-	  fields_declaration_list: $ => seq(
+	  field_declaration_list: $ => seq(
 		  '{',
 		  repeat1($.field_declaration),
 		  '}',
@@ -56,9 +71,30 @@ module.exports = grammar({
 	  field_declaration: $ => seq(
 		  field('name', $.identifier),
 		  field('type', $.primitive_type),
+		  optional(
+			  field('attributes', $.field_attribute_list)
+		  ),
 	  ),
 
-	  identifier: $ => /[a-z]+/,
+	  field_attribute_list: $ => seq(
+		  '[',
+		  repeat1($.attribute_kind),
+		  ']',
+	  ),
+
+	  relationship_definition: $ => seq(
+		  $.relationship_token,
+		  $.cardinality_operator,
+	  ),
+
+	  relationship_token: $ => token(
+		  seq(
+			  'ref',
+			  optional(':'),
+		  )
+	  ),
+
+	  identifier: $ => /[a-zA-Z_]+/,
 
 
   }

@@ -1,10 +1,10 @@
 {
   "name": "tree-sitter-dbml",
-  "version": "0.0.0",
-  "description": "Dummy Tree sitter grammar",
+  "version": "0.0.1",
+  "description": "DBML tree-sitter grammar",
   "main": "index.js",
-  "repository": null,
-  "author": "Benjamin Gray",
+  "repository": "https://github.com/saskenuba/tree-sitter-dbml",
+  "author": "Martin Mariano",
   "license": "MIT",
   "devDependencies": {
     "tree-sitter-cli": "^0.13.5"

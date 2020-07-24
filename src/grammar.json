@@ -18,6 +18,10 @@
         },
         {
           "type": "STRING",
+          "value": "null"
+        },
+        {
+          "type": "STRING",
           "value": "pk"
         },
         {
@@ -31,6 +35,23 @@
         {
           "type": "STRING",
           "value": "increment"
+        }
+      ]
+    },
+    "cardinality_operator": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "<"
+        },
+        {
+          "type": "STRING",
+          "value": ">"
+        },
+        {
+          "type": "STRING",
+          "value": "-"
         }
       ]
     },
@@ -55,6 +76,19 @@
         }
       ]
     },
+    "alias": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "as"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        }
+      ]
+    },
     "_declaration": {
       "type": "CHOICE",
       "members": [
@@ -65,6 +99,10 @@
         {
           "type": "SYMBOL",
           "name": "enum_definition"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "relationship_definition"
         }
       ]
     },
@@ -84,11 +122,27 @@
           }
         },
         {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "alias",
+              "content": {
+                "type": "SYMBOL",
+                "name": "alias"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
           "type": "FIELD",
           "name": "fields",
           "content": {
             "type": "SYMBOL",
-            "name": "fields_declaration_list"
+            "name": "field_declaration_list"
           }
         }
       ]
@@ -110,7 +164,7 @@
         }
       ]
     },
-    "fields_declaration_list": {
+    "field_declaration_list": {
       "type": "SEQ",
       "members": [
         {
@@ -148,23 +202,98 @@
             "type": "SYMBOL",
             "name": "primitive_type"
           }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "attributes",
+              "content": {
+                "type": "SYMBOL",
+                "name": "field_attribute_list"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         }
       ]
     },
+    "field_attribute_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "["
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "attribute_kind"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "]"
+        }
+      ]
+    },
+    "relationship_definition": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "relationship_token"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cardinality_operator"
+        }
+      ]
+    },
+    "relationship_token": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "ref"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ":"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "identifier": {
       "type": "PATTERN",
-      "value": "[a-z]+"
+      "value": "[a-zA-Z_]+"
     }
   },
   "extras": [
     {
       "type": "PATTERN",
-      "value": "\\s"
+      "value": "\\s|\\\\\\r?\\n\\t"
     }
   ],
   "conflicts": [],
   "externals": [],
-  "inline": [],
+  "inline": [
+    "alias"
+  ],
   "supertypes": []
 }
 
