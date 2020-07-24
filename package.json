@@ -1,5 +1,5 @@
 {
-  "name": "tree-sitter-quick_check",
+  "name": "tree-sitter-dbml",
   "version": "0.0.0",
   "description": "Dummy Tree sitter grammar",
   "main": "index.js",
@@ -10,6 +10,8 @@
     "tree-sitter-cli": "^0.13.5"
   },
   "scripts": {
-    "build": "tree-sitter generate && node-gyp build"
+    "build": "tree-sitter generate && node-gyp build && tree-sitter test",
+    "test": "tree-sitter test",
+    "ui": "tree-sitter build-wasm && tree-sitter web-ui"
   }
 }

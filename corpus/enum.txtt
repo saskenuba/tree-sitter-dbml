@@ -1,0 +1,11 @@
+========
+Empty enum
+========
+
+enum operations
+
+-----
+
+(project_file 
+	(enum_definition (identifier)))
+

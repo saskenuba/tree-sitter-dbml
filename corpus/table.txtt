@@ -1,0 +1,19 @@
+========
+Simple table
+========
+
+table users {
+	user_id int
+}
+
+-----
+
+(project_file 
+	(table_definition
+	name: (identifier)
+	fields: (fields_declaration_list
+			(field_declaration
+				name: (identifier)
+				type: (primitive_type)
+			))))
+
