@@ -9,7 +9,7 @@ ref: "preferences".user_id - users.user_id
 (project_file
 	(relationship_definition
 		(relationship :table (identifier) :column (identifier))
-		(cardinality-operator)
+		(cardinality_op)
 		(relationship :table (identifier) :column (identifier))))
 
 
@@ -24,27 +24,33 @@ ref: relationship-name {
 -----
 
 (project_file
-	(relationship_definition
+(relationship_definition
 		(relationship :table (identifier) :column (identifier))
-		(cardinality-operator)
-		(table (identifier) (column) (identifier))))
+		(cardinality_op)
+		(relationship :table (identifier) :column (identifier))))
+
 
 ========
 One relationship, inline form, one-to-one
 ========
 
-Table posts {
+table posts {
 	id int [ref: - comments.post_id]
 }
 
 -----
 
 (project_file
-	(table
+	(table_definition
 	:name (identifier)
 	:fields (fields_declaration_list
 			(field_declaration
 			:name (identifier)
 			:type (primitive_type)
-			(field_attribute_list (relationship_definition (cardinality-operator) (table (identifier) (column))))))
-))
+			:attributes (field_attribute_list
+                  (attribute_kind
+                      (relationship_definition
+                          (relationship :table (identifier) :column (identifier))
+                          (cardinality_operator)
+                          (relationship :table (identifier) :column (identifier)))
+                          ))))))

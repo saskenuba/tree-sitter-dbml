@@ -63,8 +63,12 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "STRING",
-          "value": "int"
+          "type": "PATTERN",
+          "value": "int|integer"
+        },
+        {
+          "type": "PATTERN",
+          "value": "bool|boolean"
         },
         {
           "type": "STRING",
@@ -72,11 +76,11 @@
         },
         {
           "type": "STRING",
-          "value": "bool"
+          "value": "text"
         },
         {
           "type": "STRING",
-          "value": "text"
+          "value": "varchar"
         }
       ]
     },
@@ -106,6 +110,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "tablegroup_definition"
+        },
+        {
+          "type": "SYMBOL",
           "name": "enum_definition"
         },
         {
@@ -114,7 +122,7 @@
         }
       ]
     },
-    "_declaration_block": {
+    "field_declaration_list": {
       "type": "SEQ",
       "members": [
         {
@@ -122,17 +130,11 @@
           "value": "{"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_relationship_declaration_inline"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "field_declaration_list"
-            }
-          ]
+          "type": "REPEAT1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_type_field"
+          }
         },
         {
           "type": "STRING",
@@ -176,34 +178,23 @@
           "name": "fields",
           "content": {
             "type": "SYMBOL",
-            "name": "_declaration_block"
+            "name": "field_declaration_list"
           }
         }
       ]
     },
-    "enum_definition": {
-      "type": "SEQ",
+    "_type_field": {
+      "type": "CHOICE",
       "members": [
         {
-          "type": "STRING",
-          "value": "enum"
+          "type": "SYMBOL",
+          "name": "field_declaration"
         },
         {
-          "type": "FIELD",
-          "name": "name",
-          "content": {
-            "type": "SYMBOL",
-            "name": "identifier"
-          }
+          "type": "SYMBOL",
+          "name": "index_declaration"
         }
       ]
-    },
-    "field_declaration_list": {
-      "type": "REPEAT1",
-      "content": {
-        "type": "SYMBOL",
-        "name": "field_declaration"
-      }
     },
     "field_declaration": {
       "type": "SEQ",
@@ -289,20 +280,48 @@
         }
       ]
     },
-    "_relationship_declaration_long": {
+    "index_declaration": {
       "type": "SEQ",
       "members": [
         {
-          "type": "FIELD",
-          "name": "name",
-          "content": {
-            "type": "SYMBOL",
-            "name": "identifier"
-          }
+          "type": "STRING",
+          "value": "indexes"
+        },
+        {
+          "type": "STRING",
+          "value": "{"
         },
         {
           "type": "SYMBOL",
-          "name": "_declaration_block"
+          "name": "index_attribute_list"
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "index_attribute_list": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "SYMBOL",
+        "name": "identifier"
+      }
+    },
+    "relationship_declaration_long": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "relationship_declaration_short"
+        },
+        {
+          "type": "STRING",
+          "value": "}"
         }
       ]
     },
@@ -317,51 +336,74 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_relationship_declaration_long"
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "FIELD",
+                      "name": "name",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "identifier"
+                      }
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "{"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "relationship_declaration_short"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "}"
+                    }
+                  ]
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "relationship_declaration_short"
+                }
+              ]
             },
             {
               "type": "SYMBOL",
-              "name": "_relationship_declaration_inline"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "_relationship_declaration_short"
+              "name": "relationship_declaration_inline"
             }
           ]
         }
       ]
     },
     "_relationship_token": {
-      "type": "TOKEN",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "ref"
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": ":"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          }
-        ]
-      }
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "ref"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ":"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
     },
-    "_relationship_declaration_short": {
+    "relationship_declaration_short": {
       "type": "SEQ",
       "members": [
         {
           "type": "SYMBOL",
-          "name": "table_relationship"
+          "name": "relationship"
         },
         {
           "type": "SYMBOL",
@@ -369,11 +411,11 @@
         },
         {
           "type": "SYMBOL",
-          "name": "table_relationship"
+          "name": "relationship"
         }
       ]
     },
-    "_relationship_declaration_inline": {
+    "relationship_declaration_inline": {
       "type": "SEQ",
       "members": [
         {
@@ -382,11 +424,11 @@
         },
         {
           "type": "SYMBOL",
-          "name": "table_relationship"
+          "name": "relationship"
         }
       ]
     },
-    "table_relationship": {
+    "relationship": {
       "type": "SEQ",
       "members": [
         {
@@ -436,6 +478,113 @@
           "value": ".*"
         }
       ]
+    },
+    "enum_definition": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "enum"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "enumerator_list"
+          }
+        }
+      ]
+    },
+    "enumerator_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "enumerator"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "enumerator": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        }
+      ]
+    },
+    "tablegroup_definition": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[tT]ablegroup"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "tablegroup_list"
+          }
+        }
+      ]
+    },
+    "tablegroup_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "FIELD",
+            "name": "name",
+            "content": {
+              "type": "SYMBOL",
+              "name": "identifier"
+            }
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
     }
   },
   "extras": [
@@ -451,9 +600,10 @@
   "conflicts": [],
   "externals": [],
   "inline": [
-    "alias",
-    "_declaration_block"
+    "alias"
   ],
-  "supertypes": []
+  "supertypes": [
+    "_declaration"
+  ]
 }
 

@@ -9,7 +9,7 @@ table users {
 
 -----
 
-(project_file 
+(project_file
 	(table_definition
 	name: (identifier)
 	fields: (field_declaration_list
@@ -28,7 +28,7 @@ table users {
 
 -----
 
-(project_file 
+(project_file
 	(table_definition
 	name: (identifier)
 	fields: (field_declaration_list
@@ -37,6 +37,27 @@ table users {
 				type: (primitive_type)
 				attributes: (field_attribute_list (attribute_kind)))
 )))
+
+========
+Table, one field, two attributes
+========
+
+table users {
+	user_id int [not null, unique]
+}
+
+-----
+
+(project_file
+	(table_definition
+	name: (identifier)
+	fields: (field_declaration_list
+			(field_declaration
+				name: (identifier)
+				type: (primitive_type)
+				attributes: (field_attribute_list (attribute_kind) (attribute_kind)))
+)))
+
 
 ========
 Table, two fields
@@ -49,7 +70,7 @@ table users {
 
 -----
 
-(project_file 
+(project_file
 	(table_definition
 	name: (identifier)
 	fields: (field_declaration_list
@@ -78,7 +99,7 @@ table text {
 
 -----
 
-(project_file 
+(project_file
 	(table_definition
 		name: (identifier)
 		fields: (field_declaration_list
@@ -103,7 +124,7 @@ table users as u {
 
 -----
 
-(project_file 
+(project_file
 	(table_definition
 	name: (identifier)
 	alias: (identifier)
@@ -112,4 +133,3 @@ table users as u {
 				name: (identifier)
 				type: (primitive_type))
 )))
-

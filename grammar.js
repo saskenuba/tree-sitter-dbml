@@ -8,9 +8,12 @@ module.exports = grammar({
 
     word: $ => $.identifier,
 
+    supertypes: $ => [
+        $._declaration
+    ],
+
     inline: $ => [
         $.alias,
-        $._declaration_block,
     ],
 
     rules: {
@@ -28,7 +31,7 @@ module.exports = grammar({
             $.relationship_definition, // inline relationship
         ),
 
-        //_relationship_declaration_inline: $ => sep1($.identifier, '.'),
+        //relationship_declaration_inline: $ => sep1($.identifier, '.'),
 
         cardinality_op: $ => choice(
             '<',
@@ -37,10 +40,11 @@ module.exports = grammar({
         ),
 
         primitive_type: $ => choice(
-            'int',
+            /int|integer/,
+            /bool|boolean/,
             'float',
-            'bool',
             'text',
+            'varchar',
         ),
 
         custom_type: $ => $.identifier,
@@ -52,33 +56,29 @@ module.exports = grammar({
 
         _declaration: $ => choice(
             $.table_definition,
+            $.tablegroup_definition,
             $.enum_definition,
             $.relationship_definition,
         ),
 
-        _declaration_block: $ => seq(
-            '{',
-            choice(
-                $._relationship_declaration_inline,
-                $.field_declaration_list,
-            ),
-            '}',
+        field_declaration_list: $ => seq(
+            '{', repeat1($._type_field), '}',
         ),
 
+        // TODO: Table may have a field, or a index
         table_definition: $ => seq(
             'table',
             field('name', $.identifier),
             optional(
                 field('alias', $.alias),
             ),
-            field('fields', $._declaration_block),
+            field('fields', $.field_declaration_list),
         ),
 
-        enum_definition: $ => seq(
-            'enum', field('name', $.identifier)
+        _type_field: $ => choice(
+            $.field_declaration,
+            $.index_declaration,
         ),
-
-        field_declaration_list: $ => repeat1($.field_declaration),
 
         field_declaration: $ => seq(
             field('name', $.identifier),
@@ -92,46 +92,79 @@ module.exports = grammar({
             '[', commaSep1($.attribute_kind), ']',
         ),
 
-        _relationship_declaration_long: $ => seq(
-            field('name', $.identifier),
-            $._declaration_block,
+        index_declaration: $ => seq(
+            'indexes',
+            '{',
+            $.index_attribute_list,
+            '}',
+        ),
+
+        // TODO: finish all index attributes
+        index_attribute_list: $ => repeat1($.identifier),
+
+        relationship_declaration_long: $ => seq(
+            '{',
+            $.relationship_declaration_short,
+            '}',
         ),
 
         relationship_definition: $ => seq(
             $._relationship_token,
             choice(
-                $._relationship_declaration_long,
-                $._relationship_declaration_inline,
-                $._relationship_declaration_short,
+                choice(
+                    seq(field('name', $.identifier), '{', $.relationship_declaration_short, '}'),
+                    $.relationship_declaration_short,
+                ),
+                $.relationship_declaration_inline,
             )),
 
         // FIXME: ref should be case insentive
-        _relationship_token: $ => token(
+        _relationship_token: $ =>
             seq(
                 'ref', optional(':'),
-            )
-        ),
+            ),
 
-        _relationship_declaration_short: $ => seq(
-            $.table_relationship,
+        relationship_declaration_short: $ => seq(
+            $.relationship,
             $.cardinality_op,
-            $.table_relationship,
+            $.relationship,
         ),
 
-        _relationship_declaration_inline: $ => seq(
+        relationship_declaration_inline: $ => seq(
             $.cardinality_op,
-            $.table_relationship,
+            $.relationship,
         ),
 
-        table_relationship: $ => seq(field('table', $._table_ident), '.', field('column', $._table_ident)),
+        relationship: $ => seq(field('table', $._table_ident), '.', field('column', $._table_ident)),
 
         // For relationship declarations, DBML accepts column names and table names encased with quotes
         _table_ident: $ => alias(/["a-zA-Z_]+/, $.identifier),
 
         // FIXME: Missing numbers after first char, and case insensitive
         identifier: $ => /[a-zA-Z_]+/,
-
         comment: $ => seq('//', /.*/),
+
+        enum_definition: $ => seq(
+            'enum', field('name', $.identifier), field('body', $.enumerator_list),
+        ),
+
+        enumerator_list: $ => seq(
+            '{', repeat1($.enumerator), '}',
+        ),
+
+        enumerator: $ => seq(
+            field('name', $.identifier),
+        ),
+
+        tablegroup_definition: $ => seq(
+            /[tT]ablegroup/,
+            field('name', $.identifier),
+            field('body', $.tablegroup_list),
+        ),
+
+        tablegroup_list: $ => seq(
+            '{', repeat1(field('name', $.identifier)), '}',
+        )
 
     }
 });

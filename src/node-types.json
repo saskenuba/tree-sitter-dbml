@@ -1,5 +1,27 @@
 [
   {
+    "type": "_declaration",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "enum_definition",
+        "named": true
+      },
+      {
+        "type": "relationship_definition",
+        "named": true
+      },
+      {
+        "type": "table_definition",
+        "named": true
+      },
+      {
+        "type": "tablegroup_definition",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "attribute_kind",
     "named": true,
     "fields": {},
@@ -38,6 +60,16 @@
     "type": "enum_definition",
     "named": true,
     "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "enumerator_list",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -48,6 +80,37 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "enumerator",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "enumerator_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "enumerator",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -116,6 +179,40 @@
         {
           "type": "field_declaration",
           "named": true
+        },
+        {
+          "type": "index_declaration",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "index_attribute_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "index_declaration",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "index_attribute_list",
+          "named": true
         }
       ]
     }
@@ -134,15 +231,71 @@
       "required": false,
       "types": [
         {
-          "type": "enum_definition",
+          "type": "_declaration",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "relationship",
+    "named": true,
+    "fields": {
+      "column": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "table": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "relationship_declaration_inline",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cardinality_op",
           "named": true
         },
         {
-          "type": "relationship_definition",
+          "type": "relationship",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "relationship_declaration_short",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cardinality_op",
           "named": true
         },
         {
-          "type": "table_definition",
+          "type": "relationship",
           "named": true
         }
       ]
@@ -164,19 +317,15 @@
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
-          "type": "cardinality_op",
+          "type": "relationship_declaration_inline",
           "named": true
         },
         {
-          "type": "field_declaration_list",
-          "named": true
-        },
-        {
-          "type": "table_relationship",
+          "type": "relationship_declaration_short",
           "named": true
         }
       ]
@@ -201,28 +350,12 @@
         ]
       },
       "fields": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "cardinality_op",
-            "named": true
-          },
-          {
             "type": "field_declaration_list",
             "named": true
-          },
-          {
-            "type": "table_relationship",
-            "named": true
-          },
-          {
-            "type": "{",
-            "named": false
-          },
-          {
-            "type": "}",
-            "named": false
           }
         ]
       },
@@ -239,10 +372,20 @@
     }
   },
   {
-    "type": "table_relationship",
+    "type": "tablegroup_definition",
     "named": true,
     "fields": {
-      "column": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "tablegroup_list",
+            "named": true
+          }
+        ]
+      },
+      "name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -251,9 +394,15 @@
             "named": true
           }
         ]
-      },
-      "table": {
-        "multiple": false,
+      }
+    }
+  },
+  {
+    "type": "tablegroup_list",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": true,
         "required": true,
         "types": [
           {
@@ -281,6 +430,10 @@
     "named": false
   },
   {
+    "type": ":",
+    "named": false
+  },
+  {
     "type": "<",
     "named": false
   },
@@ -301,10 +454,6 @@
     "named": false
   },
   {
-    "type": "bool",
-    "named": false
-  },
-  {
     "type": "enum",
     "named": false
   },
@@ -321,7 +470,7 @@
     "named": false
   },
   {
-    "type": "int",
+    "type": "indexes",
     "named": false
   },
   {
@@ -341,6 +490,10 @@
     "named": false
   },
   {
+    "type": "ref",
+    "named": false
+  },
+  {
     "type": "table",
     "named": false
   },
@@ -350,6 +503,10 @@
   },
   {
     "type": "unique",
+    "named": false
+  },
+  {
+    "type": "varchar",
     "named": false
   },
   {
