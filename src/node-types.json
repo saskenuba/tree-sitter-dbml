@@ -8,7 +8,7 @@
         "named": true
       },
       {
-        "type": "relationship_definition",
+        "type": "relationship_definition_top_level",
         "named": true
       },
       {
@@ -30,7 +30,7 @@
       "required": false,
       "types": [
         {
-          "type": "relationship_definition",
+          "type": "relationship_declaration_inline",
           "named": true
         }
       ]
@@ -264,6 +264,29 @@
     }
   },
   {
+    "type": "relationship_declaration_full",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cardinality_op",
+          "named": true
+        },
+        {
+          "type": "relationship",
+          "named": true
+        },
+        {
+          "type": "relationship_settings_list",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "relationship_declaration_inline",
     "named": true,
     "fields": {},
@@ -283,26 +306,7 @@
     }
   },
   {
-    "type": "relationship_declaration_short",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cardinality_op",
-          "named": true
-        },
-        {
-          "type": "relationship",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "relationship_definition",
+    "type": "relationship_definition_top_level",
     "named": true,
     "fields": {
       "name": {
@@ -321,11 +325,37 @@
       "required": true,
       "types": [
         {
-          "type": "relationship_declaration_inline",
+          "type": "relationship_declaration_full",
           "named": true
-        },
+        }
+      ]
+    }
+  },
+  {
+    "type": "relationship_settings",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
         {
-          "type": "relationship_declaration_short",
+          "type": "wot",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "relationship_settings_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "relationship_settings",
           "named": true
         }
       ]
@@ -414,6 +444,11 @@
     }
   },
   {
+    "type": "wot",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": ",",
     "named": false
   },
@@ -454,6 +489,10 @@
     "named": false
   },
   {
+    "type": "cascade",
+    "named": false
+  },
+  {
     "type": "enum",
     "named": false
   },
@@ -474,6 +513,10 @@
     "named": false
   },
   {
+    "type": "no action",
+    "named": false
+  },
+  {
     "type": "not null",
     "named": false
   },
@@ -490,7 +533,19 @@
     "named": false
   },
   {
-    "type": "ref",
+    "type": "ref:",
+    "named": false
+  },
+  {
+    "type": "restrict",
+    "named": false
+  },
+  {
+    "type": "set default",
+    "named": false
+  },
+  {
+    "type": "set null",
     "named": false
   },
   {

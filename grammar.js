@@ -28,7 +28,7 @@ module.exports = grammar({
             'primary key',
             'unique',
             'increment',
-            $.relationship_definition, // inline relationship
+            $.relationship_declaration_inline, // inline relationship
         ),
 
         //relationship_declaration_inline: $ => sep1($.identifier, '.'),
@@ -58,7 +58,7 @@ module.exports = grammar({
             $.table_definition,
             $.tablegroup_definition,
             $.enum_definition,
-            $.relationship_definition,
+            $.relationship_definition_top_level,
         ),
 
         field_declaration_list: $ => seq(
@@ -93,52 +93,57 @@ module.exports = grammar({
         ),
 
         index_declaration: $ => seq(
-            'indexes',
-            '{',
-            $.index_attribute_list,
-            '}',
+            'indexes', '{', $.index_attribute_list, '}',
         ),
 
         // TODO: finish all index attributes
         index_attribute_list: $ => repeat1($.identifier),
 
-        relationship_declaration_long: $ => seq(
-            '{',
-            $.relationship_declaration_short,
-            '}',
-        ),
-
-        relationship_definition: $ => seq(
-            $._relationship_token,
-            choice(
-                choice(
-                    seq(field('name', $.identifier), '{', $.relationship_declaration_short, '}'),
-                    $.relationship_declaration_short,
-                ),
-                $.relationship_declaration_inline,
-            )),
-
-        // FIXME: ref should be case insentive
-        _relationship_token: $ =>
+        relationship_definition_top_level: $ =>
             seq(
-                'ref', optional(':'),
+                caseInsensitive('ref'),
+                choice(
+                    seq(optional(field('name', $.identifier)), ':', $.relationship_declaration_full),
+                    seq(optional(field('name', $.identifier)), '{', $.relationship_declaration_full, '}'),
+                ),
             ),
 
-        relationship_declaration_short: $ => seq(
+        // TODO: relationships (not inlined) may have settings, such as:
+        // delete / update: cascade | restrict | set null | set default | no action
+        relationship_declaration_full: $ => seq(
             $.relationship,
             $.cardinality_op,
             $.relationship,
+            optional($.relationship_settings_list),
         ),
 
         relationship_declaration_inline: $ => seq(
+            'ref:',
             $.cardinality_op,
             $.relationship,
+        ),
+
+        relationship_settings_list: $ => seq(
+            '[', commaSep1($.relationship_settings), ']',
+        ),
+
+
+        relationship_settings: $ => choice(
+            seq(/delete:|update:/, $.relationship_parameter)
+        ),
+
+        relationship_parameter: $ => choice(
+            'set default',
+            'set null',
+            'restrict',
+            'no action',
+            'cascade',
         ),
 
         relationship: $ => seq(field('table', $._table_ident), '.', field('column', $._table_ident)),
 
         // For relationship declarations, DBML accepts column names and table names encased with quotes
-        _table_ident: $ => alias(/["a-zA-Z_]+/, $.identifier),
+        _table_ident: $ => alias(/["a-z-A-Z"]["0-9a-zA-Z_]+/, $.identifier),
 
         // FIXME: Missing numbers after first char, and case insensitive
         identifier: $ => /[a-zA-Z_]+/,
@@ -164,7 +169,7 @@ module.exports = grammar({
 
         tablegroup_list: $ => seq(
             '{', repeat1(field('name', $.identifier)), '}',
-        )
+        ),
 
     }
 });
@@ -175,4 +180,19 @@ function commaSep1(rule) {
 
 function sep1(rule, separator) {
     return seq(rule, repeat(seq(separator, rule)));
+}
+
+function toCaseInsensitive(a) {
+    var ca = a.charCodeAt(0);
+    if (ca >= 97 && ca <= 122) return `[${a}${a.toUpperCase()}]`;
+    if (ca >= 65 && ca <= 90) return `[${a.toLowerCase()}${a}]`;
+    return a;
+}
+
+function caseInsensitive(keyword) {
+    return new RegExp(keyword
+        .split('')
+        .map(toCaseInsensitive)
+        .join('')
+    );
 }

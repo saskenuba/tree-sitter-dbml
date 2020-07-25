@@ -38,7 +38,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "relationship_definition"
+          "name": "relationship_declaration_inline"
         }
       ]
     },
@@ -118,7 +118,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "relationship_definition"
+          "name": "relationship_definition_top_level"
         }
       ]
     },
@@ -308,38 +308,21 @@
         "name": "identifier"
       }
     },
-    "relationship_declaration_long": {
+    "relationship_definition_top_level": {
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "{"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "relationship_declaration_short"
-        },
-        {
-          "type": "STRING",
-          "value": "}"
-        }
-      ]
-    },
-    "relationship_definition": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_relationship_token"
+          "type": "PATTERN",
+          "value": "[rR][eE][fF]"
         },
         {
           "type": "CHOICE",
           "members": [
             {
-              "type": "CHOICE",
+              "type": "SEQ",
               "members": [
                 {
-                  "type": "SEQ",
+                  "type": "CHOICE",
                   "members": [
                     {
                       "type": "FIELD",
@@ -350,46 +333,78 @@
                       }
                     },
                     {
-                      "type": "STRING",
-                      "value": "{"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "relationship_declaration_short"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": "}"
+                      "type": "BLANK"
                     }
                   ]
                 },
                 {
+                  "type": "STRING",
+                  "value": ":"
+                },
+                {
                   "type": "SYMBOL",
-                  "name": "relationship_declaration_short"
+                  "name": "relationship_declaration_full"
                 }
               ]
             },
             {
-              "type": "SYMBOL",
-              "name": "relationship_declaration_inline"
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "FIELD",
+                      "name": "name",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "identifier"
+                      }
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "STRING",
+                  "value": "{"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "relationship_declaration_full"
+                },
+                {
+                  "type": "STRING",
+                  "value": "}"
+                }
+              ]
             }
           ]
         }
       ]
     },
-    "_relationship_token": {
+    "relationship_declaration_full": {
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "ref"
+          "type": "SYMBOL",
+          "name": "relationship"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cardinality_op"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "relationship"
         },
         {
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": ":"
+              "type": "SYMBOL",
+              "name": "relationship_settings_list"
             },
             {
               "type": "BLANK"
@@ -398,12 +413,12 @@
         }
       ]
     },
-    "relationship_declaration_short": {
+    "relationship_declaration_inline": {
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "relationship"
+          "type": "STRING",
+          "value": "ref:"
         },
         {
           "type": "SYMBOL",
@@ -415,16 +430,84 @@
         }
       ]
     },
-    "relationship_declaration_inline": {
+    "relationship_settings_list": {
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "cardinality_op"
+          "type": "STRING",
+          "value": "["
         },
         {
-          "type": "SYMBOL",
-          "name": "relationship"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "relationship_settings"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "relationship_settings"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "]"
+        }
+      ]
+    },
+    "relationship_settings": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "PATTERN",
+              "value": "delete:|update:"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "wot"
+            }
+          ]
+        }
+      ]
+    },
+    "wot": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "set default"
+        },
+        {
+          "type": "STRING",
+          "value": "set null"
+        },
+        {
+          "type": "STRING",
+          "value": "restrict"
+        },
+        {
+          "type": "STRING",
+          "value": "no action"
+        },
+        {
+          "type": "STRING",
+          "value": "cascade"
         }
       ]
     },
@@ -457,7 +540,7 @@
       "type": "ALIAS",
       "content": {
         "type": "PATTERN",
-        "value": "[\"a-zA-Z_]+"
+        "value": "[\"a-z-A-Z\"][\"0-9a-zA-Z_]+"
       },
       "named": true,
       "value": "identifier"
