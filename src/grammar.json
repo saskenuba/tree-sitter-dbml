@@ -35,10 +35,14 @@
         {
           "type": "STRING",
           "value": "increment"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "relationship_definition"
         }
       ]
     },
-    "cardinality_operator": {
+    "cardinality_op": {
       "type": "CHOICE",
       "members": [
         {
@@ -76,6 +80,10 @@
         }
       ]
     },
+    "custom_type": {
+      "type": "SYMBOL",
+      "name": "identifier"
+    },
     "alias": {
       "type": "SEQ",
       "members": [
@@ -103,6 +111,32 @@
         {
           "type": "SYMBOL",
           "name": "relationship_definition"
+        }
+      ]
+    },
+    "_declaration_block": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_relationship_declaration_inline"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "field_declaration_list"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "}"
         }
       ]
     },
@@ -142,7 +176,7 @@
           "name": "fields",
           "content": {
             "type": "SYMBOL",
-            "name": "field_declaration_list"
+            "name": "_declaration_block"
           }
         }
       ]
@@ -165,24 +199,11 @@
       ]
     },
     "field_declaration_list": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "{"
-        },
-        {
-          "type": "REPEAT1",
-          "content": {
-            "type": "SYMBOL",
-            "name": "field_declaration"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": "}"
-        }
-      ]
+      "type": "REPEAT1",
+      "content": {
+        "type": "SYMBOL",
+        "name": "field_declaration"
+      }
     },
     "field_declaration": {
       "type": "SEQ",
@@ -199,8 +220,17 @@
           "type": "FIELD",
           "name": "type",
           "content": {
-            "type": "SYMBOL",
-            "name": "primitive_type"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "primitive_type"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "custom_type"
+              }
+            ]
           }
         },
         {
@@ -229,15 +259,50 @@
           "value": "["
         },
         {
-          "type": "REPEAT1",
-          "content": {
-            "type": "SYMBOL",
-            "name": "attribute_kind"
-          }
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "attribute_kind"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "attribute_kind"
+                  }
+                ]
+              }
+            }
+          ]
         },
         {
           "type": "STRING",
           "value": "]"
+        }
+      ]
+    },
+    "_relationship_declaration_long": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_declaration_block"
         }
       ]
     },
@@ -246,15 +311,28 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "relationship_token"
+          "name": "_relationship_token"
         },
         {
-          "type": "SYMBOL",
-          "name": "cardinality_operator"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_relationship_declaration_long"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_relationship_declaration_inline"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_relationship_declaration_short"
+            }
+          ]
         }
       ]
     },
-    "relationship_token": {
+    "_relationship_token": {
       "type": "TOKEN",
       "content": {
         "type": "SEQ",
@@ -278,12 +356,93 @@
         ]
       }
     },
+    "_relationship_declaration_short": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "table_relationship"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cardinality_op"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "table_relationship"
+        }
+      ]
+    },
+    "_relationship_declaration_inline": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "cardinality_op"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "table_relationship"
+        }
+      ]
+    },
+    "table_relationship": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "table",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_table_ident"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "."
+        },
+        {
+          "type": "FIELD",
+          "name": "column",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_table_ident"
+          }
+        }
+      ]
+    },
+    "_table_ident": {
+      "type": "ALIAS",
+      "content": {
+        "type": "PATTERN",
+        "value": "[\"a-zA-Z_]+"
+      },
+      "named": true,
+      "value": "identifier"
+    },
     "identifier": {
       "type": "PATTERN",
       "value": "[a-zA-Z_]+"
+    },
+    "comment": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "//"
+        },
+        {
+          "type": "PATTERN",
+          "value": ".*"
+        }
+      ]
     }
   },
   "extras": [
+    {
+      "type": "SYMBOL",
+      "name": "comment"
+    },
     {
       "type": "PATTERN",
       "value": "\\s|\\\\\\r?\\n\\t"
@@ -292,7 +451,8 @@
   "conflicts": [],
   "externals": [],
   "inline": [
-    "alias"
+    "alias",
+    "_declaration_block"
   ],
   "supertypes": []
 }

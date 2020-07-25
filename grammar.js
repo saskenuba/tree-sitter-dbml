@@ -1,101 +1,145 @@
 module.exports = grammar({
-  name: "dbml",
+    name: "dbml",
 
-	extras: $ => [/\s|\\\r?\n\t/],
-	word: $ => $.identifier,
+    extras: $ => [
+        $.comment,
+        /\s|\\\r?\n\t/
+    ],
 
-	inline: $ => [
-		$.alias,
-	],
+    word: $ => $.identifier,
 
-  rules: {
+    inline: $ => [
+        $.alias,
+        $._declaration_block,
+    ],
 
-	  project_file: $ => repeat($._declaration),
+    rules: {
 
-	  // TODO: default, ref_inline, note
-	  attribute_kind: $ => choice(
-		  'not null',
-		  'null',
-		  'pk',
-		  'primary key',
-		  'unique',
-		  'increment',
-	  ),
+        project_file: $ => repeat($._declaration),
 
-	  //
-	  cardinality_operator: $ => choice(
-		  '<',
-		  '>',
-		  '-',
-	  ),
+        // TODO: default, ref_inline, note
+        attribute_kind: $ => choice(
+            'not null',
+            'null',
+            'pk',
+            'primary key',
+            'unique',
+            'increment',
+            $.relationship_definition, // inline relationship
+        ),
 
-	  primitive_type: $ => choice(
-		  'int',
-		  'float',
-		  'bool',
-		  'text',
-	  ),
+        //_relationship_declaration_inline: $ => sep1($.identifier, '.'),
 
-	  alias: $ => seq(
-		  'as', 
-		  $.identifier,
-	  ),
+        cardinality_op: $ => choice(
+            '<',
+            '>',
+            '-',
+        ),
 
-	_declaration: $ => choice(
-		$.table_definition,
-		$.enum_definition,
-		$.relationship_definition,
-	),
+        primitive_type: $ => choice(
+            'int',
+            'float',
+            'bool',
+            'text',
+        ),
 
+        custom_type: $ => $.identifier,
 
-	  table_definition: $ => seq(
-		  'table',
-		  field('name', $.identifier),
-		  optional(
-			  field('alias', $.alias),
-		  ),
-		  field('fields', $.field_declaration_list),
-	  ),
+        alias: $ => seq(
+            'as',
+            $.identifier,
+        ),
 
-	  enum_definition: $ => seq(
-		  'enum',
-		  field('name', $.identifier)
-	  ),
+        _declaration: $ => choice(
+            $.table_definition,
+            $.enum_definition,
+            $.relationship_definition,
+        ),
 
-	  field_declaration_list: $ => seq(
-		  '{',
-		  repeat1($.field_declaration),
-		  '}',
-	  ),
+        _declaration_block: $ => seq(
+            '{',
+            choice(
+                $._relationship_declaration_inline,
+                $.field_declaration_list,
+            ),
+            '}',
+        ),
 
-	  field_declaration: $ => seq(
-		  field('name', $.identifier),
-		  field('type', $.primitive_type),
-		  optional(
-			  field('attributes', $.field_attribute_list)
-		  ),
-	  ),
+        table_definition: $ => seq(
+            'table',
+            field('name', $.identifier),
+            optional(
+                field('alias', $.alias),
+            ),
+            field('fields', $._declaration_block),
+        ),
 
-	  field_attribute_list: $ => seq(
-		  '[',
-		  repeat1($.attribute_kind),
-		  ']',
-	  ),
+        enum_definition: $ => seq(
+            'enum', field('name', $.identifier)
+        ),
 
-	  relationship_definition: $ => seq(
-		  $.relationship_token,
-		  $.cardinality_operator,
-	  ),
+        field_declaration_list: $ => repeat1($.field_declaration),
 
-	  relationship_token: $ => token(
-		  seq(
-			  'ref',
-			  optional(':'),
-		  )
-	  ),
+        field_declaration: $ => seq(
+            field('name', $.identifier),
+            field('type', choice($.primitive_type, $.custom_type)),
+            optional(
+                field('attributes', $.field_attribute_list)
+            ),
+        ),
 
-	  identifier: $ => /[a-zA-Z_]+/,
+        field_attribute_list: $ => seq(
+            '[', commaSep1($.attribute_kind), ']',
+        ),
 
+        _relationship_declaration_long: $ => seq(
+            field('name', $.identifier),
+            $._declaration_block,
+        ),
 
-  }
+        relationship_definition: $ => seq(
+            $._relationship_token,
+            choice(
+                $._relationship_declaration_long,
+                $._relationship_declaration_inline,
+                $._relationship_declaration_short,
+            )),
+
+        // FIXME: ref should be case insentive
+        _relationship_token: $ => token(
+            seq(
+                'ref', optional(':'),
+            )
+        ),
+
+        _relationship_declaration_short: $ => seq(
+            $.table_relationship,
+            $.cardinality_op,
+            $.table_relationship,
+        ),
+
+        _relationship_declaration_inline: $ => seq(
+            $.cardinality_op,
+            $.table_relationship,
+        ),
+
+        table_relationship: $ => seq(field('table', $._table_ident), '.', field('column', $._table_ident)),
+
+        // For relationship declarations, DBML accepts column names and table names encased with quotes
+        _table_ident: $ => alias(/["a-zA-Z_]+/, $.identifier),
+
+        // FIXME: Missing numbers after first char, and case insensitive
+        identifier: $ => /[a-zA-Z_]+/,
+
+        comment: $ => seq('//', /.*/),
+
+    }
 });
+
+function commaSep1(rule) {
+    return sep1(rule, ',');
+}
+
+function sep1(rule, separator) {
+    return seq(rule, repeat(seq(separator, rule)));
+}

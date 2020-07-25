@@ -2,12 +2,37 @@
   {
     "type": "attribute_kind",
     "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "relationship_definition",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cardinality_op",
+    "named": true,
     "fields": {}
   },
   {
-    "type": "cardinality_operator",
+    "type": "custom_type",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "enum_definition",
@@ -69,6 +94,10 @@
         "required": true,
         "types": [
           {
+            "type": "custom_type",
+            "named": true
+          },
+          {
             "type": "primitive_type",
             "named": true
           }
@@ -122,17 +151,32 @@
   {
     "type": "relationship_definition",
     "named": true,
-    "fields": {},
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": true,
       "types": [
         {
-          "type": "cardinality_operator",
+          "type": "cardinality_op",
           "named": true
         },
         {
-          "type": "relationship_token",
+          "type": "field_declaration_list",
+          "named": true
+        },
+        {
+          "type": "table_relationship",
           "named": true
         }
       ]
@@ -157,12 +201,28 @@
         ]
       },
       "fields": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
           {
+            "type": "cardinality_op",
+            "named": true
+          },
+          {
             "type": "field_declaration_list",
             "named": true
+          },
+          {
+            "type": "table_relationship",
+            "named": true
+          },
+          {
+            "type": "{",
+            "named": false
+          },
+          {
+            "type": "}",
+            "named": false
           }
         ]
       },
@@ -179,7 +239,45 @@
     }
   },
   {
+    "type": "table_relationship",
+    "named": true,
+    "fields": {
+      "column": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "table": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": ",",
+    "named": false
+  },
+  {
     "type": "-",
+    "named": false
+  },
+  {
+    "type": ".",
+    "named": false
+  },
+  {
+    "type": "//",
     "named": false
   },
   {
@@ -241,10 +339,6 @@
   {
     "type": "primary key",
     "named": false
-  },
-  {
-    "type": "relationship_token",
-    "named": true
   },
   {
     "type": "table",

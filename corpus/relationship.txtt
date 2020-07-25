@@ -2,32 +2,32 @@
 One relationship, short form, one-to-one
 ========
 
-ref: "preferences"."user_id" - "users"."user_id"
+ref: "preferences".user_id - users.user_id
 
 -----
 
 (project_file
 	(relationship_definition
-		(table (identifier) (column) (identifier))
+		(relationship :table (identifier) :column (identifier))
 		(cardinality-operator)
-		(table (identifier) (column) (identifier))))
+		(relationship :table (identifier) :column (identifier))))
+
 
 ========
 One relationship, long form, one-to-one
 ========
 
 ref: relationship-name {
-	"preferences"."user_id" - "users"."user_id"
+	preferences.user_id - users.user_id
 }
 
 -----
 
 (project_file
 	(relationship_definition
-		(table (identifier) (column) (identifier))
+		(relationship :table (identifier) :column (identifier))
 		(cardinality-operator)
 		(table (identifier) (column) (identifier))))
-
 
 ========
 One relationship, inline form, one-to-one
@@ -36,7 +36,6 @@ One relationship, inline form, one-to-one
 Table posts {
 	id int [ref: - comments.post_id]
 }
-
 
 -----
 
@@ -49,5 +48,3 @@ Table posts {
 			:type (primitive_type)
 			(field_attribute_list (relationship_definition (cardinality-operator) (table (identifier) (column))))))
 ))
-
-
