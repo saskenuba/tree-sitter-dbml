@@ -37,8 +37,13 @@
           "value": "increment"
         },
         {
-          "type": "SYMBOL",
-          "name": "relationship_declaration_inline"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "relationship_declaration_inline"
+          },
+          "named": true,
+          "value": "relationship_declaration"
         }
       ]
     },
@@ -118,7 +123,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "relationship_definition_top_level"
+          "name": "relationship_declaration"
         }
       ]
     },
@@ -308,7 +313,7 @@
         "name": "identifier"
       }
     },
-    "relationship_definition_top_level": {
+    "relationship_declaration": {
       "type": "SEQ",
       "members": [
         {
@@ -316,88 +321,77 @@
           "value": "[rR][eE][fF]"
         },
         {
-          "type": "CHOICE",
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_relationship_body"
+          }
+        }
+      ]
+    },
+    "_relationship_body": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
           "members": [
             {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "FIELD",
-                      "name": "name",
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "identifier"
-                      }
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
-                },
-                {
-                  "type": "STRING",
-                  "value": ":"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "relationship_declaration_full"
-                }
-              ]
+              "type": "STRING",
+              "value": "{"
             },
             {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "FIELD",
-                      "name": "name",
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "identifier"
-                      }
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
-                },
-                {
-                  "type": "STRING",
-                  "value": "{"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "relationship_declaration_full"
-                },
-                {
-                  "type": "STRING",
-                  "value": "}"
-                }
-              ]
+              "type": "SYMBOL",
+              "name": "relationship_body"
+            },
+            {
+              "type": "STRING",
+              "value": "}"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ":"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "relationship_body"
             }
           ]
         }
       ]
     },
-    "relationship_declaration_full": {
+    "relationship_body": {
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "relationship"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "cardinality_op"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "relationship"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "table_field"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "cardinality_op"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "table_field"
+                  }
+                ]
+              }
+            }
+          ]
         },
         {
           "type": "CHOICE",
@@ -413,6 +407,19 @@
         }
       ]
     },
+    "relationship_body_inline": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "cardinality_op"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "table_field"
+        }
+      ]
+    },
     "relationship_declaration_inline": {
       "type": "SEQ",
       "members": [
@@ -421,12 +428,17 @@
           "value": "ref:"
         },
         {
-          "type": "SYMBOL",
-          "name": "cardinality_op"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "relationship"
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "relationship_body_inline"
+            },
+            "named": true,
+            "value": "relationship_body"
+          }
         }
       ]
     },
@@ -480,13 +492,13 @@
             },
             {
               "type": "SYMBOL",
-              "name": "wot"
+              "name": "relationship_parameter"
             }
           ]
         }
       ]
     },
-    "wot": {
+    "relationship_parameter": {
       "type": "CHOICE",
       "members": [
         {
@@ -511,7 +523,7 @@
         }
       ]
     },
-    "relationship": {
+    "table_field": {
       "type": "SEQ",
       "members": [
         {
@@ -528,7 +540,7 @@
         },
         {
           "type": "FIELD",
-          "name": "column",
+          "name": "field",
           "content": {
             "type": "SYMBOL",
             "name": "_table_ident"
@@ -540,7 +552,7 @@
       "type": "ALIAS",
       "content": {
         "type": "PATTERN",
-        "value": "[\"a-z-A-Z\"][\"0-9a-zA-Z_]+"
+        "value": "[\"0-9a-zA-Z_]+"
       },
       "named": true,
       "value": "identifier"

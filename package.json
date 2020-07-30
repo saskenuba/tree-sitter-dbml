@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-dbml",
-  "version": "0.0.1",
+  "version": "0.0.9",
   "description": "DBML tree-sitter grammar",
   "main": "index.js",
   "repository": "https://github.com/saskenuba/tree-sitter-dbml",
@@ -13,5 +13,11 @@
     "build": "tree-sitter generate && node-gyp build && tree-sitter test",
     "test": "tree-sitter test",
     "ui": "tree-sitter build-wasm && tree-sitter web-ui"
-  }
+  },
+  "tree-sitter": [
+    {
+      "scope": "source.dbml",
+      "file-types": [ "dbml", "dbd" ]
+    }
+  ]
 }

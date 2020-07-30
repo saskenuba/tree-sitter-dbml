@@ -8,7 +8,7 @@
         "named": true
       },
       {
-        "type": "relationship_definition_top_level",
+        "type": "relationship_declaration",
         "named": true
       },
       {
@@ -30,7 +30,7 @@
       "required": false,
       "types": [
         {
-          "type": "relationship_declaration_inline",
+          "type": "relationship_declaration",
           "named": true
         }
       ]
@@ -238,33 +238,7 @@
     }
   },
   {
-    "type": "relationship",
-    "named": true,
-    "fields": {
-      "column": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "table": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "relationship_declaration_full",
+    "type": "relationship_body",
     "named": true,
     "fields": {},
     "children": {
@@ -273,63 +247,51 @@
       "types": [
         {
           "type": "cardinality_op",
-          "named": true
-        },
-        {
-          "type": "relationship",
           "named": true
         },
         {
           "type": "relationship_settings_list",
           "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "relationship_declaration_inline",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cardinality_op",
-          "named": true
         },
         {
-          "type": "relationship",
+          "type": "table_field",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "relationship_definition_top_level",
+    "type": "relationship_declaration",
     "named": true,
     "fields": {
-      "name": {
-        "multiple": false,
-        "required": false,
+      "body": {
+        "multiple": true,
+        "required": true,
         "types": [
           {
-            "type": "identifier",
+            "type": ":",
+            "named": false
+          },
+          {
+            "type": "relationship_body",
             "named": true
+          },
+          {
+            "type": "{",
+            "named": false
+          },
+          {
+            "type": "}",
+            "named": false
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "relationship_declaration_full",
-          "named": true
-        }
-      ]
     }
+  },
+  {
+    "type": "relationship_parameter",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "relationship_settings",
@@ -340,7 +302,7 @@
       "required": true,
       "types": [
         {
-          "type": "wot",
+          "type": "relationship_parameter",
           "named": true
         }
       ]
@@ -402,6 +364,32 @@
     }
   },
   {
+    "type": "table_field",
+    "named": true,
+    "fields": {
+      "field": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "table": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "tablegroup_definition",
     "named": true,
     "fields": {
@@ -442,11 +430,6 @@
         ]
       }
     }
-  },
-  {
-    "type": "wot",
-    "named": true,
-    "fields": {}
   },
   {
     "type": ",",

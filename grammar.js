@@ -28,10 +28,8 @@ module.exports = grammar({
             'primary key',
             'unique',
             'increment',
-            $.relationship_declaration_inline, // inline relationship
+            alias($.relationship_declaration_inline, $.relationship_declaration), // inline table_field
         ),
-
-        //relationship_declaration_inline: $ => sep1($.identifier, '.'),
 
         cardinality_op: $ => choice(
             '<',
@@ -58,7 +56,7 @@ module.exports = grammar({
             $.table_definition,
             $.tablegroup_definition,
             $.enum_definition,
-            $.relationship_definition_top_level,
+            $.relationship_declaration,
         ),
 
         field_declaration_list: $ => seq(
@@ -99,28 +97,32 @@ module.exports = grammar({
         // TODO: finish all index attributes
         index_attribute_list: $ => repeat1($.identifier),
 
-        relationship_definition_top_level: $ =>
+        relationship_declaration: $ =>
             seq(
                 caseInsensitive('ref'),
-                choice(
-                    seq(optional(field('name', $.identifier)), ':', $.relationship_declaration_full),
-                    seq(optional(field('name', $.identifier)), '{', $.relationship_declaration_full, '}'),
-                ),
+                field('body', $._relationship_body),
             ),
+
+        _relationship_body: $ => choice(
+            seq('{', $.relationship_body, '}'),
+            seq(':', $.relationship_body),
+        ),
 
         // TODO: relationships (not inlined) may have settings, such as:
         // delete / update: cascade | restrict | set null | set default | no action
-        relationship_declaration_full: $ => seq(
-            $.relationship,
-            $.cardinality_op,
-            $.relationship,
+        relationship_body: $ => seq(
+            sep1($.table_field, $.cardinality_op),
             optional($.relationship_settings_list),
+        ),
+
+        relationship_body_inline: $ => seq(
+            $.cardinality_op,
+            $.table_field,
         ),
 
         relationship_declaration_inline: $ => seq(
             'ref:',
-            $.cardinality_op,
-            $.relationship,
+            field('body', alias($.relationship_body_inline, $.relationship_body)),
         ),
 
         relationship_settings_list: $ => seq(
@@ -140,10 +142,10 @@ module.exports = grammar({
             'cascade',
         ),
 
-        relationship: $ => seq(field('table', $._table_ident), '.', field('column', $._table_ident)),
+        table_field: $ => seq(field('table', $._table_ident), '.', field('field', $._table_ident)),
 
         // For relationship declarations, DBML accepts column names and table names encased with quotes
-        _table_ident: $ => alias(/["a-z-A-Z"]["0-9a-zA-Z_]+/, $.identifier),
+        _table_ident: $ => alias(/["0-9a-zA-Z_]+/, $.identifier),
 
         // FIXME: Missing numbers after first char, and case insensitive
         identifier: $ => /[a-zA-Z_]+/,
