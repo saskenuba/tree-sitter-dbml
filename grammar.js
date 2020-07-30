@@ -13,7 +13,7 @@ module.exports = grammar({
     ],
 
     inline: $ => [
-        $.alias,
+        $.table_alias,
     ],
 
     rules: {
@@ -47,7 +47,7 @@ module.exports = grammar({
 
         custom_type: $ => $.identifier,
 
-        alias: $ => seq(
+        table_alias: $ => seq(
             'as',
             $.identifier,
         ),
@@ -68,7 +68,7 @@ module.exports = grammar({
             'table',
             field('name', $.identifier),
             optional(
-                field('alias', $.alias),
+                field('alias', $.table_alias),
             ),
             field('fields', $.field_declaration_list),
         ),
@@ -100,10 +100,10 @@ module.exports = grammar({
         relationship_declaration: $ =>
             seq(
                 caseInsensitive('ref'),
-                field('body', $._relationship_body),
+                field('body', $._relationship_body_block),
             ),
 
-        _relationship_body: $ => choice(
+        _relationship_body_block: $ => choice(
             seq('{', $.relationship_body, '}'),
             seq(':', $.relationship_body),
         ),

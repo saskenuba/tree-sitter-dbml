@@ -93,7 +93,7 @@
       "type": "SYMBOL",
       "name": "identifier"
     },
-    "alias": {
+    "table_alias": {
       "type": "SEQ",
       "members": [
         {
@@ -170,7 +170,7 @@
               "name": "alias",
               "content": {
                 "type": "SYMBOL",
-                "name": "alias"
+                "name": "table_alias"
               }
             },
             {
@@ -325,12 +325,12 @@
           "name": "body",
           "content": {
             "type": "SYMBOL",
-            "name": "_relationship_body"
+            "name": "_relationship_body_block"
           }
         }
       ]
     },
-    "_relationship_body": {
+    "_relationship_body_block": {
       "type": "CHOICE",
       "members": [
         {
@@ -695,7 +695,7 @@
   "conflicts": [],
   "externals": [],
   "inline": [
-    "alias"
+    "table_alias"
   ],
   "supertypes": [
     "_declaration"
