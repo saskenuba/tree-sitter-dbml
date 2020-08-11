@@ -60,7 +60,7 @@ module.exports = grammar({
         ),
 
         field_declaration_list: $ => seq(
-            '{', repeat1($._type_field), '}',
+            '{', optional(repeat1($._type_field)), '}',
         ),
 
         // TODO: Table may have a field, or a index
@@ -100,20 +100,26 @@ module.exports = grammar({
         relationship_declaration: $ =>
             seq(
                 caseInsensitive('ref'),
+                optional($.identifier),
                 field('body', $._relationship_body_block),
             ),
 
         _relationship_body_block: $ => choice(
-            seq('{', $.relationship_body, '}'),
-            seq(':', $.relationship_body),
+            seq('{', optional($.relationship_body), '}'),
+            seq(':', optional($.relationship_body)),
         ),
 
         // TODO: relationships (not inlined) may have settings, such as:
         // delete / update: cascade | restrict | set null | set default | no action
-        relationship_body: $ => seq(
-            sep1($.table_field, $.cardinality_op),
-            optional($.relationship_settings_list),
-        ),
+        relationship_body: $ =>
+            seq(
+                choice(
+                    seq($.table_field),
+                    seq($.table_field, $.cardinality_op),
+                    seq($.table_field, $.cardinality_op, $.table_field),
+                ),
+                optional($.relationship_settings_list),
+            ),
 
         relationship_body_inline: $ => seq(
             $.cardinality_op,
@@ -142,13 +148,15 @@ module.exports = grammar({
             'cascade',
         ),
 
-        table_field: $ => seq(field('table', $._table_ident), '.', field('field', $._table_ident)),
+        table_field: $ => choice(
+            seq(field('table', $.identifier)),
+            seq(field('table', $.identifier), '.'),
+            seq(field('table', $.identifier), '.', field('column', $.identifier)),
+        ),
 
-        // For relationship declarations, DBML accepts column names and table names encased with quotes
-        _table_ident: $ => alias(/["0-9a-zA-Z_]+/, $.identifier),
 
         // FIXME: Missing numbers after first char, and case insensitive
-        identifier: $ => /[a-zA-Z_]+/,
+        identifier: $ => /[0-9a-zA-Z_]+/,
         comment: $ => seq('//', /.*/),
 
         enum_definition: $ => seq(
@@ -178,6 +186,17 @@ module.exports = grammar({
 
 function commaSep1(rule) {
     return sep1(rule, ',');
+}
+
+function takeAny(...args) {
+    let sequences = [];
+
+    for (let [index, value] of args.entries()) {
+        let slice = args.slice(0, index);
+        sequences.push(seq(slice));
+    }
+
+    return choice(sequences);
 }
 
 function sep1(rule, separator) {
