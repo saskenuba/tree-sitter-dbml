@@ -49,7 +49,7 @@ module.exports = grammar({
 
         table_alias: $ => seq(
             'as',
-            $.identifier,
+            field('alias', $.identifier),
         ),
 
         _declaration: $ => choice(
@@ -67,9 +67,7 @@ module.exports = grammar({
         table_definition: $ => seq(
             'table',
             field('name', $.identifier),
-            optional(
-                field('alias', $.table_alias),
-            ),
+            optional($.table_alias),
             field('fields', $.field_declaration_list),
         ),
 

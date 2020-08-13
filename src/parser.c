@@ -567,12 +567,12 @@ static const TSFieldMapSlice ts_field_map_slices[13] = {
   [4] = {.index = 4, .length = 1},
   [5] = {.index = 5, .length = 2},
   [6] = {.index = 7, .length = 1},
-  [7] = {.index = 8, .length = 4},
-  [8] = {.index = 12, .length = 2},
-  [9] = {.index = 14, .length = 2},
-  [10] = {.index = 16, .length = 1},
-  [11] = {.index = 17, .length = 2},
-  [12] = {.index = 19, .length = 3},
+  [7] = {.index = 8, .length = 3},
+  [8] = {.index = 11, .length = 2},
+  [9] = {.index = 13, .length = 2},
+  [10] = {.index = 15, .length = 1},
+  [11] = {.index = 16, .length = 2},
+  [12] = {.index = 18, .length = 3},
 };
 
 static const TSFieldMapEntry ts_field_map_entries[] = {
@@ -591,22 +591,21 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
   [7] =
     {field_name, 0},
   [8] =
-    {field_alias, 2},
     {field_alias, 3},
     {field_fields, 4},
     {field_name, 1},
-  [12] =
+  [11] =
     {field_name, 0},
     {field_type, 1},
-  [14] =
+  [13] =
     {field_column, 2},
     {field_table, 0},
-  [16] =
+  [15] =
     {field_name, 1, .inherited = true},
-  [17] =
+  [16] =
     {field_name, 0, .inherited = true},
     {field_name, 1, .inherited = true},
-  [19] =
+  [18] =
     {field_attributes, 2},
     {field_name, 0},
     {field_type, 1},

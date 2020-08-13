@@ -101,8 +101,12 @@
           "value": "as"
         },
         {
-          "type": "SYMBOL",
-          "name": "identifier"
+          "type": "FIELD",
+          "name": "alias",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
         }
       ]
     },
@@ -174,12 +178,8 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "FIELD",
-              "name": "alias",
-              "content": {
-                "type": "SYMBOL",
-                "name": "table_alias"
-              }
+              "type": "SYMBOL",
+              "name": "table_alias"
             },
             {
               "type": "BLANK"
